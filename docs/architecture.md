@@ -8,6 +8,12 @@ On success, the resolver expects `reply.results.data` as a list or `reply.result
 
 These are deliberately narrow adapter assumptions, not a claim of universal API compatibility. Compare them with current tenant documentation and authorized runtime responses before deployment. Official references: [start query](https://docs-cortex.paloaltonetworks.com/r/Cortex-XSIAM-REST-API/Start-an-XQL-query), [query results](https://docs-cortex.paloaltonetworks.com/r/Cortex-XSIAM-REST-API/Get-XQL-query-results), [stream results](https://docs-cortex.paloaltonetworks.com/r/Cortex-XSIAM-Platform-APIs/Get-XQL-query-results-Stream?contentId=Dm0qyhaD6O29P1io3960~g). Reference discovery was checked on 2026-09-12; some documentation URLs redirect, so a complete current contract verification remains pending.
 
+## Execution lifecycle rationale
+
+Submission, completion and delivery are separate decisions. A successful start provides an execution handle, not an analytics table. The implementation keeps that handle within one invocation, waits for a terminal status and then selects the available delivery path. The same normalization contract applies to both paths. This is the generalizable orchestration design retained from the project's design notes; internal alternative labels are unnecessary to use the connector.
+
+Streaming preference means selecting an available stream ID instead of an inline preview. It does not mean forcing the provider to create a stream, continuously processing bytes with bounded memory, or repeatedly polling after `SUCCESS`. The public implementation resolves delivery only after success. Observations about a stream ID appearing later are investigation leads requiring current contract and runtime evidence before changing that policy.
+
 ## Public output contract
 
 One row per returned issue record; the code does not deduplicate records or enforce unique issue IDs. Counts describe returned records, not necessarily distinct issues. Before building a distinct-issue measure, validate the dataset grain.
@@ -43,3 +49,18 @@ The attempt bound includes the first poll. With 12 attempts and a five-second de
 ## Power BI implications
 
 Only enable loading for the final data query. Editor previews and independent query evaluations may trigger additional live executions; the single-invocation execution scope is not an exactly-once guarantee across refreshes. Begin with bounded queries and reconcile source, parsed and loaded counts. Scheduled refresh, gateway credentials, privacy levels and query folding are not validated. No PBIX, model, measures or dashboard are shipped.
+
+## Future work: controlled extraction windows
+
+The broader design proposes splitting a long interval into smaller execution windows. The shipped code computes one timeframe and runs one lifecycle; it does not generate windows, merge their results or remove duplicates. A timeframe preset is not a windowed extraction implementation.
+
+Before implementing this extension:
+
+1. Fix a UTC extraction interval once and define the source event-time field, precision and boundary inclusion rules.
+2. Verify provider boundary semantics. Do not assume that adding one millisecond between windows prevents duplicates without also risking gaps.
+3. Test synthetic records exactly at, before and after a boundary. Choose nonoverlapping intervals only where supported, or an explicit overlap-and-deduplication policy.
+4. Define identity and update semantics: an issue ID alone may not identify a historical event. Decide how repeated snapshots and late updates are handled.
+5. Run and reconcile each window independently, fail explicitly on incomplete windows and define restart/checkpoint behavior before combining output.
+6. Measure memory, request cost and completion behavior before selecting a window size. Smaller windows do not by themselves prove complete extraction.
+
+Adaptive retry/backoff, nested-schema adapters and packaging are separate future changes. Each needs its own contract and validation; none is implied by the current demo.

@@ -6,6 +6,8 @@ This public edition is reconstructed as a new set of files. No private Git objec
 
 The source review found placeholder credentials in tracked parameter files. It also identified runtime return structures capable of carrying authentication headers, credential context and raw failed-row samples. The public implementation does not return those structures. This is a current-tree review, not a forensic certification of private history or untracked local files.
 
+A second architecture reference for the same project was also reviewed. Its sanitized M source still exposes request/context and failed-row diagnostic surfaces, so those structures were not imported. Only rewritten, generalizable design rationale and investigation methods were retained. Narrative claims about completed windowing, adaptive polling, duplicate prevention, memory safety and stable refresh were excluded as implementation evidence; proposed work is labelled explicitly. Source repository addresses, historical identifiers and original documentation files are not published here.
+
 Excluded entirely: runtime screenshots, operational notes and test-run evidence, original changelog/status narrative, real query/stream/tenant identifiers, internal names, assignments, free-text incident descriptions, raw errors, request headers and bodies in diagnostics. The runtime screenshot is excluded by category and was not visually inspected; no claim is made about its contents. Fixture identifiers use `SYNTH-` and all records were authored for this demo. No private deployment or result is claimed as public validation evidence.
 
 ## Live execution boundary

@@ -14,7 +14,22 @@ This project demonstrates how to separate those responsibilities, preserve execu
 
 This project supports my AI Analytics Engineer portfolio through concrete work in API orchestration, data contracts, defensive parsing, synthetic validation and security-aware data delivery. These are relevant foundations for Applied AI and AI-Native Data Products.
 
-**The implementation contains no model inference, agents, embeddings, RAG or AI-generated analytics.** AI-assisted engineering describes assistance with the public reconstruction, documentation and review process. It does not describe runtime functionality, prove autonomous engineering or establish production results. Technical choices remain subject to human review.
+**The implementation contains no model inference, agents, embeddings, RAG or AI-generated analytics.** The project's development notes describe AI assistance with architecture exploration, lifecycle modeling, debugging hypotheses, function organization and documentation. This public reconstruction also uses AI-assisted engineering. These describe the development process, not runtime functionality or measured productivity gains. Technical choices and validation remain human responsibilities.
+
+## What the code demonstrates
+
+The public edition consolidates implementation and design notes from the same project into one small reference. Capabilities are described according to the code shipped here:
+
+| Area | Implemented in this edition | Boundary |
+| --- | --- | --- |
+| Execution lifecycle | Start once per invocation, poll, resolve delivery, normalize | Not exactly-once across Power BI evaluations |
+| Delivery selection | Prefer an available stream ID in a successful response; otherwise use inline records | Does not force streaming or wait beyond success for a later stream ID |
+| Polling | Configurable attempt bound and fixed delay | No adaptive backoff or durable execution state |
+| Time scope | Explicit UTC start/end for one query | No rolling-window loop, checkpointing or deduplication |
+| Parsing and schema | NDJSON record validation and six typed output columns | Buffered payload; malformed rows fail the refresh |
+| Validation | Synthetic demo, M test suite and static checks | Live refresh and performance remain unverified |
+
+The key design choice is to coordinate the whole asynchronous execution lifecycle while keeping transport, parsing and the output contract separate. Planned extraction-window controls are documented as future work, not existing behavior.
 
 ## Architecture
 

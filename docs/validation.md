@@ -2,7 +2,7 @@
 
 ## Status
 
-- Source review: current tracked text and structure reviewed; binary runtime evidence excluded without reuse.
+- Source review: implementation and architecture references for the same project were cross-checked. Documentation claims about rolling windows, adaptive polling, duplicate prevention and refresh reliability were not treated as proof of shipped behavior. Binary runtime evidence was excluded without reuse.
 - Syntax check: all six `.pq` files passed Microsoft's `@microsoft/powerquery-parser` version 2.0.0 on 2026-09-12. This checks grammar, not execution or type correctness. The parser was used locally and is not a runtime dependency.
 - Offline artifact checks: run with `node scripts/validate.mjs`; validate synthetic fixture structure, local links and common disclosure patterns. This does not execute M.
 - M contract suite: 25 tests supplied in `tests/ContractTests.pq`; execution in Power Query is pending.
@@ -18,6 +18,16 @@ Create `Connector` and `ContractTests` queries with the exact filenames' content
 The suite uses actual M functions with injected synthetic transports. It does not simulate Power Query's HTTP/authentication engine. Run it in the target Power BI Desktop version and record version, date and pass/fail counts before marking it validated. Do not attach live screenshots or datasets.
 
 ## Authorized live acceptance checklist
+
+### Investigation method
+
+Use a short cycle: hypothesis → controlled case → observation → decision. Keep documented provider behavior, a locally observed response and an untested explanation separate. AI can help propose hypotheses and organize the investigation; it cannot establish API behavior without evidence.
+
+For a UI/API count discrepancy, fix the same absolute UTC interval, dataset, filters, explicit result limits and permissions before comparing counts. Check the UI's effective time selection as well as query text; do not automatically attribute a discrepancy to timeframe handling. Confirm source freshness and record grain, then reconcile delivery, parsed, normalized and loaded counts. Keep real execution identifiers and payloads private.
+
+For schema variation, distinguish missing optional fields from invalid values in projected fields and unexpected nested structures. The current contract permits the first, rejects invalid projected values and discards unapproved fields. It does not flatten arbitrary nested records. For changing delivery modes, record sanitized status sequences and whether an inline or stream path was selected; investigate unexplained transitions before broadening the accepted API contract.
+
+### Live checks
 
 1. Confirm standard API-key authentication, exact API origin, least privilege and current provider contract.
 2. Start a bounded query; confirm the start response shape and same execution ID across polling and stream retrieval without publishing identifiers.
