@@ -53,4 +53,4 @@ assert(!/Web\.Contents/.test(tests), 'Contract tests must remain offline');
 const ignore = readFileSync(resolve(root, '.gitignore'), 'utf8');
 assert(!ignore.split(/\r?\n/).includes('*.pq'), 'Power Query source must remain tracked');
 console.log(`PASS: ${files.length} allowlisted files, ${links} local links, 2 synthetic rows, 25 M test definitions.`);
-console.log('Pattern checks passed; human disclosure review remains necessary. M runtime was NOT executed.');
+console.log('Pattern checks passed; human disclosure review remains necessary. This static checker does not execute M.');

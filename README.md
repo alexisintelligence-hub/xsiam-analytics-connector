@@ -27,7 +27,7 @@ The public edition consolidates implementation and design notes from the same pr
 | Polling | Configurable attempt bound and fixed delay | No adaptive backoff or durable execution state |
 | Time scope | Explicit UTC start/end for one query | No rolling-window loop, checkpointing or deduplication |
 | Parsing and schema | NDJSON record validation and six typed output columns | Buffered payload; malformed rows fail the refresh |
-| Validation | Synthetic demo, M test suite and static checks | Live refresh and performance remain unverified |
+| Validation | 25 M tests and offline demo passed in the Power Query SDK engine | Power BI Desktop loading, live refresh and performance remain unverified |
 
 The key design choice is to coordinate the whole asynchronous execution lifecycle while keeping transport, parsing and the output contract separate. Planned extraction-window controls are documented as future work, not existing behavior.
 
@@ -62,7 +62,7 @@ The transport is injected into the core. The demo and M tests use synthetic tran
 5. For model use, convert `event_time_utc` to Date/Time only after retaining its UTC meaning in the column name. Keep `issue_id` as text.
 6. Create `ContractTests` using [tests/ContractTests.pq](tests/ContractTests.pq). All 25 rows should have `Passed = true`; otherwise the query raises an error.
 
-The functions and tests are supplied as M source, not a `.mez` extension. Runtime checks in Power BI remain pending; see [validation status](docs/validation.md).
+The functions and tests are supplied as M source, not a `.mez` extension. The 25 tests and offline demo passed in the Power Query SDK engine on 2026-09-12. Loading through Power BI Desktop and service refresh remain pending; see [validation status](docs/validation.md).
 
 ## Project structure
 

@@ -30,7 +30,7 @@ let
         in if Limit >= 1 and Delay >= 0 then Step(1) else Fail("InvalidPollingConfiguration"),
     ParseNdjson = (payload as binary) as record =>
         let
-            Bytes = Binary.ToList(Binary.FirstN(payload, 2)),
+            Bytes = Binary.ToList(Binary.Range(payload, 0, List.Min({2, Binary.Length(payload)}))),
             IsGzip = Bytes = {31, 139},
             Decoded = if IsGzip then (try Binary.Decompress(payload, Compression.GZip) otherwise Fail("InvalidGzip")) else payload,
             Raw = try Text.FromBinary(Decoded, TextEncoding.Utf8) otherwise Fail("InvalidEncoding"),
@@ -69,7 +69,7 @@ let
             RowCount = List.Count(Delivery[Rows])
         in
             if not CountValid then Fail("InvalidReportedCount")
-            else if Count <> null and Count <> RowCount then Fail("RowCountMismatch")
+            else if RowCount <> (if Count = null then RowCount else Count) then Fail("RowCountMismatch")
             else [Rows = Delivery[Rows], Diagnostics = [DeliveryMode = Delivery[Mode],
                 ApiReportedCount = Count, ParsedRows = RowCount, NonEmptyLines = Delivery[NonEmptyLines]]],
     Normalize = (rows as list) as table =>
