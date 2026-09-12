@@ -8,7 +8,7 @@ const expected = [
   '.gitignore', 'LICENSE', 'README.md', 'src/Connector.pq', 'src/LiveTransport.pq',
   'config/Config.example.pq', 'examples/DemoIssues.pq', 'examples/LiveIssues.pq',
   'examples/issues.ndjson', 'tests/ContractTests.pq', 'scripts/validate.mjs',
-  'docs/architecture.md', 'docs/security.md', 'docs/validation.md'
+  'docs/architecture.md', 'docs/security.md', 'docs/validation.md', 'assets/xsiam-powerbi-redacted.png'
 ];
 function walk(dir) {
   return readdirSync(dir, {withFileTypes: true}).flatMap(e => {
@@ -21,6 +21,23 @@ const files = walk(root);
 assert.deepEqual(files.sort(), expected.sort(), 'Unexpected or missing publication file');
 let links = 0;
 for (const path of files) {
+  if (path === 'assets/xsiam-powerbi-redacted.png') {
+    const png = readFileSync(resolve(root, path));
+    assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+    const permitted = new Set(['IHDR', 'PLTE', 'IDAT', 'IEND', 'tRNS']);
+    let offset = 8;
+    let lastType = '';
+    while (offset < png.length) {
+      assert(offset + 12 <= png.length, 'Truncated PNG chunk');
+      const length = png.readUInt32BE(offset);
+      lastType = png.toString('ascii', offset + 4, offset + 8);
+      assert(permitted.has(lastType), 'Unapproved PNG metadata');
+      offset += length + 12;
+      assert(offset <= png.length, 'Invalid PNG length');
+    }
+    assert.equal(lastType, 'IEND');
+    continue; // Explicit image allowlist; pixel privacy requires visual review.
+  }
   const text = readFileSync(resolve(root, path), 'utf8');
   assert(!text.includes('\u0000'), `Binary content: ${path}`);
   assert(!/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(text), `Private key: ${path}`);

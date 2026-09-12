@@ -106,6 +106,12 @@ Run `node scripts/validate.mjs` from the repository root for fixture, link, publ
 
 Strict parsing and row-count reconciliation prevent silent partial success. A six-column allowlist makes schema drift explicit but limits dataset coverage. Stream download is buffered in memory, not a constant-memory iterator. Bounded polling makes refresh cost more predictable but can time out on long queries. There is no durable job state, automatic start-query retry, pagination/window partitioning or incremental refresh. [Architecture and decisions](docs/architecture.md) explains the consequences.
 
+## Redacted visual reference
+
+![Edited Power BI visual reference with identifying text covered](assets/xsiam-powerbi-redacted.png)
+
+AI-edited derivative of a historical project screenshot, included at the author's request. Identifying text is covered; aggregate figures are retained from the original and are **not synthetic**. This image illustrates the report layout only. It is not a pixel-exact archival capture, evidence of the public connector's runtime, or the output of the two-row offline demo. See [publication boundaries](docs/security.md).
+
 ## License
 
 MIT; see [LICENSE](LICENSE). Cortex XSIAM and Power BI are third-party products. This project is independent and is not endorsed by their vendors.

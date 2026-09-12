@@ -78,4 +78,4 @@ For schema variation, distinguish missing optional fields from invalid values in
 
 ## Release criteria
 
-Publish only reviewed allowlisted source and synthetic fixtures. The PR must contain no source-repository history or evidence assets. Human review is required before merge. Synthetic M execution has passed in the SDK; Desktop load, live API, service/gateway refresh and production validation remain pending. This project must not be labelled production-ready based on these checks alone.
+Publish only reviewed allowlisted source, synthetic fixtures and the explicitly authorized redacted visual reference described in docs/security.md. The image is not part of runtime validation and does not establish Desktop loading for this public implementation. The PR must contain no source-repository history or unredacted evidence assets. Human review is required before merge. Synthetic M execution has passed in the SDK; Desktop load, live API, service/gateway refresh and production validation remain pending. This project must not be labelled production-ready based on these checks alone.
