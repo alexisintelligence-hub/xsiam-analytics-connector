@@ -1,0 +1,26 @@
+# Keep .pq source tracked; local credentials and Power BI containers stay private.
+.env
+.env.*
+!.env.example
+*.local.*
+config/Config.pq
+local/
+secrets/
+private/
+raw-data/
+runtime-evidence/
+*.pbix
+*.pbit
+*.mashup
+*.mez
+*.zip
+*.log
+*.pem
+*.key
+*.pfx
+.pbi/
+.vscode/
+.idea/
+node_modules/
+.DS_Store
+Thumbs.db

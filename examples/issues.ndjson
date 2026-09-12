@@ -1,0 +1,2 @@
+{"xdm.issue.id":"SYNTH-001","xdm.issue.severity":"high","xdm.issue.status.progress":"new","_time":1767225600000,"xdm.issue.alert_count":3,"xdm.issue.is_excluded":false}
+{"xdm.issue.id":"SYNTH-002","xdm.issue.severity":"low","xdm.issue.status.progress":"resolved","_time":1767312000000,"xdm.issue.alert_count":"1","xdm.issue.is_excluded":"false"}
